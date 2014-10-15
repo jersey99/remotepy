@@ -1,11 +1,16 @@
 from django.core.management.base import BaseCommand, CommandError
-from netlambda.models import Function
+from netlambda.models import Function, Arg
 from os import listdir
 import json
 
 class Command(BaseCommand):
     help = 'Fill functions into DB'
     def createFunction (self, **kwargs):
+        print kwargs
+        if "args" in kwargs:
+            print kwargs["args"]
+            kwargs["args"] = [Arg(**arg) for arg in kwargs["args"]]
+        print kwargs
         Function(**kwargs).save()
     def handle(self, *args, **options):
         jsonFilesPath = "../function-json/"

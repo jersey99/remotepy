@@ -1,7 +1,0 @@
-{ "path": "../code/hypergeometric.py",
-  "name": "hypergeometric",
-  "args": ["n", "totalN"],
-  "defaultArgVals": [45, 75],
-  "minRange" : [1,1],
-  "maxRange" : [100, 100]
-}
