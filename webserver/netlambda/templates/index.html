@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Make a PyCall</title>
+</head>
+<body>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+    {% load staticfiles %}
+    <script src="{% static "backbone-tastypie.js" %}"></script>
+    <script src="{% static "remotepy.js" %}"></script>
+    <div id="functions">
+      <script type="text/template" id="functionlist"><a id="{0}-fid" data-fid="{0}" class="functionName">{1}</a></script>
+    </div>
+</body>
+</html>
