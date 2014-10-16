@@ -17,5 +17,5 @@ class FunctionResource(resources.MongoEngineResource):
 class TaskResource(resources.MongoEngineResource):
     class Meta:
         queryset = models.Task.objects.all()
-        allowed_methods = ('create', 'post', 'get')
+        allowed_methods = ('get')
         #authorization = authorization.Authorization()

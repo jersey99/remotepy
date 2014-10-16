@@ -4,14 +4,27 @@
     <title>Make a PyCall</title>
 </head>
 <body>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<!--    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>-->
     {% load staticfiles %}
+    <script src="{% static "jquery.min.js" %}"></script>
+    <script src="{% static "underscore-min.js" %}"></script>
+    <script src="{% static "backbone-min.js" %}"></script>
     <script src="{% static "backbone-tastypie.js" %}"></script>
     <script src="{% static "remotepy.js" %}"></script>
     <div id="functions">
       <script type="text/template" id="functionlist"><a id="{0}-fid" data-fid="{0}" class="functionName">{1}</a></script>
+    </div>
+    <script type="text/template" id="argInputLine">
+      <span>
+	arg-name: {1} ; arg-type : {2} ; arg-range: [{3}, {4}] Value:<input name="{0}" placeholder="{5}" class="argInput" data-tn="{0}">
+      </span>
+      <!-- <a id="{0}-fid" data-fid="{0}" class="functionName">{1}</a>-->
+    </script>
+    <div id="jobsetup">
+      <div id="arglistsetup">
+      </div>
     </div>
 </body>
 </html>
