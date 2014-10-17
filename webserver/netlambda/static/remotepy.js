@@ -6,6 +6,9 @@ $(document).ready(function(){
 	}
 	var Arg = Backbone.Model.extend({
 		defaults: { value : undefined },
+		initialize: function() {
+		    this.set("value",this.get('default'));
+		},
 		validate: function(attrs) {
 		    if ((this.has('min') && (this.get('min') > this.value))||
 			(this.has('max') && (this.get('max') < this.value))) {
@@ -36,7 +39,6 @@ $(document).ready(function(){
 	    });
 	var Args = Backbone.Collection.extend({model: Arg});
 	var ags = undefined;
-	var Task = Backbone.Model.extend({});
 	var ArgsView = Backbone.View.extend({ 
 		el : $("#arglistsetup"),
 		//		initialize : function(options){  },
@@ -60,6 +62,7 @@ $(document).ready(function(){
 		    ags = new Args(model.get('args'));
 		}
 	    });
+	var Task = Backbone.Model.extend({urlRoot: '/task/t'});
 	var JobView = Backbone.View.extend({
 		el: "#jobsetup",
 		events: {
@@ -67,9 +70,11 @@ $(document).ready(function(){
 		},
 		submitJob : function () {
 		    if (ags.every(function (m) {return m.validate()})) {
-			var Task = {argNames : ags.pluck('name'),
-				    argVals : ags.pluck('value'),
-				    funcID : this.model.get('id')};
+			var t = new Task({argNames : ags.pluck('name'),
+					  argVals : ags.pluck('value'),
+					  function: { id: this.model.get('id'),
+						      name: this.model.get('name')}});
+			t.save();
 		    }
 		},
 		render : function () {
@@ -87,7 +92,7 @@ $(document).ready(function(){
 		    var fid = event.currentTarget.dataset.fid;
 		    var func = this.model.find(function(f) {return f.get("id") == fid});
 		    t = new Job(func)
-		    taskView = new JobView({model:t})
+		    taskView = new JobView({model:t.toJSON()})
 		    taskView.render()
 		},
 		render: function (flist) {

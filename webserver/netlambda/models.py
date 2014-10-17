@@ -1,4 +1,5 @@
 from mongoengine import *
+#from celerify import Celerify
 
 class Arg(EmbeddedDocument):
     name = StringField(required=True)
@@ -13,6 +14,10 @@ class Function(Document):
     name = StringField(required=True)
     args = ListField(EmbeddedDocumentField(Arg))
     description = StringField()
+
+#    @classmethod
+#    def post_save(cls, sender, document, **kwargs):
+#        Celerify(document.path, document.name, document.id)
 
 class Task(Document):
     created_on = DateTimeField()
