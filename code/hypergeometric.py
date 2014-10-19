@@ -1,3 +1,6 @@
+from celery import Celery
+app = Celery('hypergeometric', backend='redis://localhost:6379/0',
+             broker='redis://localhost:6379/0')
 N=75 # Total Questions
 n=45 # Questions per turn
 def prod(l): return reduce(lambda x,y: x*y,l,1)
@@ -28,6 +31,7 @@ def expectedTurns(Q):
     X[Q] = Ev
     return Ev
 
+@app.task
 def totalTurns(n=45,totalN=75):
     global N
     N = totalN
