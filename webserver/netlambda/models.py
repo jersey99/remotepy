@@ -22,6 +22,7 @@ class Function(Document):
 class Task(Document):
     created_on = DateTimeField()
     function = ReferenceField(Function, required=True)
+    celery_uuid = StringField()
     argNames = ListField(StringField())
     argVals = ListField(DynamicField())
     # completed is a read-only field from Client perspective

@@ -15,7 +15,16 @@ class FunctionResource(resources.MongoEngineResource):
         resource_name = 'func'
         #authorization = authorization.Authorization()
 
-class TaskValidation(Validation):
+#class TaskValidation(Validation):
+
+class TaskResource(resources.MongoEngineResource):
+#    function = fields.ReferenceField(to="netlambda.resources.FunctionResource", attribute="function", full=True)
+    class Meta:
+        object_class = models.Task
+        resource_name = 't'
+        allowed_methods = ('get', 'post')
+#        validation = TaskValidation()
+        #authorization = authorization.Authorization()
     def is_valid(self, bundle, request=None):
         print "hiya"
         if not bundle.data:
@@ -40,16 +49,8 @@ class TaskValidation(Validation):
                     if argVals[i] > arg.max or argVals[i] < arg.min:
                         return errors.update({arg.name:"Out of Bounds"})
             print "Model Validated!"
+        print errors
         return errors
-
-class TaskResource(resources.MongoEngineResource):
-#    function = fields.ReferenceField(to="netlambda.resources.FunctionResource", attribute="function", full=True)
-    class Meta:
-        object_class = models.Task
-        resource_name = 't'
-        allowed_methods = ('get', 'post')
-        validation = TaskValidation()
-        #authorization = authorization.Authorization()
     def obj_create(self, bundle, **kwargs):
         errors = self.is_valid(bundle)
         if errors:
@@ -75,4 +76,14 @@ class TaskResource(resources.MongoEngineResource):
         bundle.data['argVals'] = valid_values
         bundle.data['function'] = F
         print "bundle.data", bundle.data
-#        models.Task(**bundle.data).save()
+        # TODO: If task was already run, retrieve the result of the task instead
+        from webserver.settings import celery_conn
+        if F.path:
+            fname = F.path.split('/')
+            fname = fname[-1]
+            fname = fname.split('.py')[0]
+            result = celery_conn.send_task(fname+'.'+F.name, valid_values)
+            bundle.data['celery_uuid'] = result.id
+            bundle.obj = models.Task(**bundle.data)
+            bundle.obj.save()
+            return bundle

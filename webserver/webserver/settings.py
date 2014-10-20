@@ -163,3 +163,6 @@ LOGGING = {
 
 from mongoengine import connect
 connect('turkeycalltest')
+
+from celery import Celery
+celery_conn = Celery(backend='mongodb://localhost/turkeycalltest',broker='mongodb://localhost/turkeycalltest')
