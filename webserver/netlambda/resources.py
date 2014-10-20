@@ -23,8 +23,22 @@ class TaskResource(resources.MongoEngineResource):
         object_class = models.Task
         resource_name = 't'
         allowed_methods = ('get', 'post')
+        always_return_data=True
 #        validation = TaskValidation()
         #authorization = authorization.Authorization()
+    def obj_get(self, bundle, **kwargs):
+        t = models.Task.objects(id=kwargs['pk']).first()
+        print "t", t, kwargs['pk'], t.argVals
+        if t.completed:
+            return t
+        from celery.result import AsyncResult
+        res = AsyncResult(t.celery_uuid)
+        if res.ready():
+            t.completed = True
+            t.retVal = [res.get()]
+            t.save()
+        return t
+
     def is_valid(self, bundle, request=None):
         print "hiya"
         if not bundle.data:
@@ -75,6 +89,7 @@ class TaskResource(resources.MongoEngineResource):
         bundle.data['argNames'] = valid_names
         bundle.data['argVals'] = valid_values
         bundle.data['function'] = F
+        bundle.data['completed'] = False
         print "bundle.data", bundle.data
         # TODO: If task was already run, retrieve the result of the task instead
         from webserver.settings import celery_conn
@@ -86,4 +101,5 @@ class TaskResource(resources.MongoEngineResource):
             bundle.data['celery_uuid'] = result.id
             bundle.obj = models.Task(**bundle.data)
             bundle.obj.save()
+            print "returning bundle"
             return bundle

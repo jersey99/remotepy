@@ -63,18 +63,46 @@ $(document).ready(function(){
 		}
 	    });
 	var Task = Backbone.Model.extend({urlRoot: '/task/t'});
+	var TaskView = Backbone.View.extend({
+		el : "#jobresult",
+		timeoutID : undefined,
+		timeoutVal : 500,
+		initialize : function() {
+		    this.model.bind('change:completed', this.render, this);
+		    _.bindAll(this, 'render');
+		},
+		render : function () {
+		    var temp = $('#jobResultLine').html();
+		    var args = _.map(_.zip(this.model.get('argNames'),this.model.get('argVals')),
+				     function(arg){return arg[0]+'='+arg[1]}).join(',');
+		    if (this.model.get('completed')) {
+			temp = temp.format(this.model.get('name'),args,this.model.get('retVal'));
+			if (this.timeoutID != undefined) {
+			    clearInterval(this.timeoutID);
+			}
+		    } else {
+			temp = temp.format(this.model.get('name'),args," Computing ...");
+			var that = this;
+			if (this.timeoutID != undefined) clearInterval(this.timeoutID);
+			this.timeoutID = setInterval(function(){that.model.fetch();},this.timeoutVal);
+			this.timeoutVal = this.timeoutVal * 2;
+		    }
+		    this.$el.html(temp);
+		}
+	    });
 	var JobView = Backbone.View.extend({
 		el: "#jobsetup",
-		events: {
-		    "click .submit-job-btn" : "submitJob"
-		},
+		events: {"click .submit-job-btn" : "submitJob"},
 		submitJob : function () {
 		    if (ags.every(function (m) {return m.validate()})) {
 			var t = new Task({argNames : ags.pluck('name'),
 					  argVals : ags.pluck('value'),
 					  function: { id: this.model.get('id'),
 						      name: this.model.get('name')}});
-			t.save();
+			t.save(null,{success:function(model, response){
+				    tv = new TaskView({model:model});
+				    tv.render();
+				}});
 		    }
 		},
 		render : function () {
