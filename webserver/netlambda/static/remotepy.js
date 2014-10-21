@@ -74,7 +74,7 @@ $(document).ready(function(){
 		render : function () {
 		    var temp = $('#jobResultLine').html();
 		    var args = _.map(_.zip(this.model.get('argNames'),this.model.get('argVals')),
-				     function(arg){return arg[0]+'='+arg[1]}).join(',');
+				     function(arg){return arg[0]+'='+arg[1]}).join(', ');
 		    if (this.model.get('completed')) {
 			temp = temp.format(this.model.get('name'),args,this.model.get('retVal'));
 			if (this.timeoutID != undefined) {

@@ -15,22 +15,18 @@ class FunctionResource(resources.MongoEngineResource):
         resource_name = 'func'
         #authorization = authorization.Authorization()
 
-#class TaskValidation(Validation):
-
 class TaskResource(resources.MongoEngineResource):
-#    function = fields.ReferenceField(to="netlambda.resources.FunctionResource", attribute="function", full=True)
+    function = fields.ReferenceField(to="netlambda.resources.FunctionResource", attribute="function", full=True)
     class Meta:
         object_class = models.Task
         resource_name = 't'
         allowed_methods = ('get', 'post')
         always_return_data=True
-#        validation = TaskValidation()
         #authorization = authorization.Authorization()
     def obj_get(self, bundle, **kwargs):
         t = models.Task.objects(id=kwargs['pk']).first()
         print "t", t, kwargs['pk'], t.argVals
-        if t.completed:
-            return t
+        if t.completed: return t
         from celery.result import AsyncResult
         res = AsyncResult(t.celery_uuid)
         if res.ready():
@@ -54,14 +50,17 @@ class TaskResource(resources.MongoEngineResource):
             argVals = bundle.data['argVals']
             argNames = bundle.data['argNames']
             for arg in F.args:
+                print "Ahem", arg.name, argNames, arg.name in argNames
                 if arg.name in argNames:
                     i = argNames.index(arg.name)
                     if arg.type == 'int':
                         argVals[i] = int(argVals[i])
                     elif arg.type == 'float':
                         argVals[i] = float(argVals[i])
-                    if argVals[i] > arg.max or argVals[i] < arg.min:
-                        return errors.update({arg.name:"Out of Bounds"})
+                    print "args", argVals[i],arg.max, arg.min, argVals[i] > arg.max, argVals[i] < arg.min
+                    if (argVals[i] > arg.max) or (argVals[i] < arg.min):
+                        errors.update({arg.name:"Out of Bounds"})
+                        return errors
             print "Model Validated!"
         print errors
         return errors
@@ -89,6 +88,7 @@ class TaskResource(resources.MongoEngineResource):
         bundle.data['argNames'] = valid_names
         bundle.data['argVals'] = valid_values
         bundle.data['function'] = F
+        bundle.data['name'] = F.name
         bundle.data['completed'] = False
         print "bundle.data", bundle.data
         # TODO: If task was already run, retrieve the result of the task instead
