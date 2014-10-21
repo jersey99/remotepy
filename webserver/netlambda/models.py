@@ -14,10 +14,11 @@ class Function(Document):
     name = StringField(required=True)
     args = ListField(EmbeddedDocumentField(Arg))
     description = StringField()
+    package_name = StringField()
 
-#    @classmethod
-#    def post_save(cls, sender, document, **kwargs):
-#        Celerify(document.path, document.name, document.id)
+class Package(Document):
+    name = StringField(required=True)
+    functions = ListField(ReferenceField(Function, required=True))
 
 class Task(Document):
     created_on = DateTimeField()
