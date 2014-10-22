@@ -6,6 +6,9 @@
 		 },
 		{"name": "fact",
   	      	  "args": [ { "name": "n", "type": "int", "default": 10, "min" : 1, "max":100 }]
+		 },
+		{"name": "addNumList",
+  	      	  "args": [ { "name": "numList", "type": "list-int", "default": [10], "min" : 1, "max":100 }]
 		 }
 		]
 }

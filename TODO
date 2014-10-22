@@ -6,3 +6,5 @@ General:
 2. Previous results computed View (using d3?)
 3. Don't compute previously computed results
 4. Celerify python code
+5. Autostart a celery worker
+6. Javascript validate fields

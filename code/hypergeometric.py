@@ -1,6 +1,9 @@
 from celery import Celery
 app = Celery('hypergeometric', backend='mongodb://localhost/turkeycalltest',
              broker='mongodb://localhost/turkeycalltest')
+@app.task
+def addNumList(l): return reduce(lambda x,y: x+y,l,0)
+
 N=75 # Total Questions
 n=45 # Questions per turn
 def prod(l): return reduce(lambda x,y: x*y,l,1)

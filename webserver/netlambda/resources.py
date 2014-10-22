@@ -2,6 +2,7 @@ from tastypie_mongoengine import resources, fields
 #from models import Function, Task, Arg
 from netlambda import models
 from tastypie.validation import Validation
+import json
 
 class ArgResource (resources.MongoEngineResource):
     class Meta:
@@ -23,6 +24,7 @@ class TaskResource(resources.MongoEngineResource):
         allowed_methods = ('get', 'post')
         always_return_data=True
         #authorization = authorization.Authorization()
+
     def obj_get(self, bundle, **kwargs):
         t = models.Task.objects(id=kwargs['pk']).first()
         print "t", t, kwargs['pk'], t.argVals
@@ -36,7 +38,6 @@ class TaskResource(resources.MongoEngineResource):
         return t
 
     def is_valid(self, bundle, request=None):
-        print "hiya"
         if not bundle.data:
             return {'__all__': 'Not quite what I had in mind.'}
         errors = {}
@@ -47,7 +48,7 @@ class TaskResource(resources.MongoEngineResource):
             if ((not 'argNames' in bundle.data) or (not 'argVals' in bundle.data) or 
                 (len(bundle.data['argNames']) != len(bundle.data['argVals']))):
                 return errors.update({"function": "Number of argument Names and Values provided don't match"})
-            argVals = bundle.data['argVals']
+            argVals = map(lambda x: json.loads(x), bundle.data['argVals'])
             argNames = bundle.data['argNames']
             for arg in F.args:
                 print "Ahem", arg.name, argNames, arg.name in argNames
@@ -57,13 +58,19 @@ class TaskResource(resources.MongoEngineResource):
                         argVals[i] = int(argVals[i])
                     elif arg.type == 'float':
                         argVals[i] = float(argVals[i])
-                    print "args", argVals[i],arg.max, arg.min, argVals[i] > arg.max, argVals[i] < arg.min
-                    if (argVals[i] > arg.max) or (argVals[i] < arg.min):
+                    elif arg.type == 'list-int':
+                        argVals[i] = map(int,list(argVals[i]))
+                    elif arg.type == 'list-float':
+                        argVals[i] = map(float,list(argVals[i]))
+                    if (((type(argVals[i]) == list) and
+                         any(map(lambda x: (x > arg.max) or (x < arg.min), argVals[i]))) or
+                        (type(argVals[i]) != list and (argVals[i] > arg.max or argVals[i] < arg.min))):
                         errors.update({arg.name:"Out of Bounds"})
                         return errors
             print "Model Validated!"
         print errors
         return errors
+
     def obj_create(self, bundle, **kwargs):
         errors = self.is_valid(bundle)
         if errors:
@@ -71,7 +78,8 @@ class TaskResource(resources.MongoEngineResource):
             raise ImmediateHttpResponse(response=self.error_response(bundle.request, errors))
         func_key = bundle.data['function']['id']
         F = models.Function.objects(id=func_key).first()
-        argVals = bundle.data['argVals']
+        argVals = map(lambda x: json.loads(x), bundle.data['argVals'])
+        #argVals = json.loads(bundle.data['argVals'])
         argNames = bundle.data['argNames']
         valid_names = []
         valid_values = []
@@ -83,6 +91,10 @@ class TaskResource(resources.MongoEngineResource):
                     valid_values.append(int(argVals[i]))
                 elif arg.type == 'float':
                     valid_values.append(float(argVals[i]))
+                elif arg.type == 'list-int':
+                    valid_values.append(map(int,list(argVals[i])))
+                elif arg.type == 'list-float':
+                    valid_values.append(map(float,list(argVals[i])))
             else:
                 valid_values.append(arg.default)
         bundle.data['argNames'] = valid_names
