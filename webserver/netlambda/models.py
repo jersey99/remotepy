@@ -18,6 +18,7 @@ class Function(Document):
 
 class Package(Document):
     name = StringField(required=True)
+    path = StringField(required=True)
     functions = ListField(ReferenceField(Function, required=True))
 
 class Task(Document):

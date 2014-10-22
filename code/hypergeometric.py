@@ -4,6 +4,7 @@ app = Celery('hypergeometric', backend='mongodb://localhost/turkeycalltest',
 N=75 # Total Questions
 n=45 # Questions per turn
 def prod(l): return reduce(lambda x,y: x*y,l,1)
+@app.task
 def fact(n):
     if n<=1: return 1
     else: return n*fact(n-1)
@@ -34,6 +35,8 @@ def expectedTurns(Q):
 @app.task
 def totalTurns(n=45,totalN=75):
     global N
+    global X
+    X = {}
     N = totalN
     retVal = 1+expectedTurns(n) # the Extra 1 for the first turn
     print retVal
