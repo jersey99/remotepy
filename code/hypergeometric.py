@@ -7,10 +7,11 @@ def addNumList(l): return reduce(lambda x,y: x+y,l,0)
 N=75 # Total Questions
 n=45 # Questions per turn
 def prod(l): return reduce(lambda x,y: x*y,l,1)
-@app.task
+
 def fact(n):
     if n<=1: return 1
     else: return n*fact(n-1)
+
 def choose(n,k):
     return fact(n)/(fact(k)*fact(n-k))
 
@@ -47,15 +48,3 @@ def totalTurns(n=45,totalN=75):
 
 if __name__ == "__main__":
     totalTurns()
-#for k in sorted(X.keys()): print k, X[k]
-
-# HG={} #Memoise
-# def hyperGeometricMemoise(k,K):
-#     if HG.has_key(K) and HG[K].has_key(k):
-#         return HG[K][k]
-#     else:
-#         v = hyperGeometric(k,n,K,N)
-#         if not HG.has_key(K):
-#             HG[K] = {}
-#             HG[K][k] = v
-#         return v

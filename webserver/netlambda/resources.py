@@ -27,7 +27,7 @@ class TaskResource(resources.MongoEngineResource):
 
     def obj_get(self, bundle, **kwargs):
         t = models.Task.objects(id=kwargs['pk']).first()
-        print "t", t, kwargs['pk'], t.argVals
+        print "t", t, kwargs['pk'], t.argVals, t.completed
         if t.completed: return t
         from celery.result import AsyncResult
         res = AsyncResult(t.celery_uuid)
