@@ -8,6 +8,7 @@ $(document).ready(function(){
 		defaults: { value : undefined },
 		initialize: function() {
 		    this.set("value",this.get('default'));
+		    _.bindAll(this,"validate");
 		},
 		validate: function(attrs) {
 		    if ((this.has('min') && (this.get('min') > this.value))||
@@ -19,7 +20,6 @@ $(document).ready(function(){
 	    });
 	var ArgView = Backbone.View.extend({
 		tagName : 'div',
-		that : this,
 		initialize : function(model, options){
 		    this.options = options
 		},
@@ -33,7 +33,7 @@ $(document).ready(function(){
 		    var temp = $("#argInputLine").html();
 		    temp = temp.format(this.model.get("name"), this.model.get("name"), this.model.get("type"),
 				       this.model.get("min"), this.model.get("max"), this.model.get('default'));
-		    this.$el.html(temp)
+		    this.$el.html(temp);
 		    return this;
 		}
 	    });
@@ -41,7 +41,6 @@ $(document).ready(function(){
 	var ags = undefined;
 	var ArgsView = Backbone.View.extend({ 
 		el : $("#arglistsetup"),
-		//		initialize : function(options){  },
 		addOne : function(model) {
 		    var view = new ArgView ({ model : model });
 		    this.$el.append(view.render().el);
@@ -51,16 +50,18 @@ $(document).ready(function(){
 		    ags.each(function(model){that.addOne(model);});
 		},
 		render : function() {
-		    this.$el.html("")
+		    this.$el.html("");
 		    this.addAll();
 		    return this
 		},
+		close : function() {
+		    this.remove();
+		    this.unbind();
+		}
 	    });
 	var agsv = undefined;
         var Job = Backbone.Model.extend({
-		initialize: function (model) {
-		    ags = new Args(model.get('args'));
-		}
+		initialize: function () {ags = new Args(this.get('args'));}
 	    });
 	var Task = Backbone.Model.extend({urlRoot: '/task/t'});
 	var TaskView = Backbone.View.extend({
@@ -69,7 +70,12 @@ $(document).ready(function(){
 		timeoutVal : 500,
 		initialize : function() {
 		    this.model.bind('change:completed', this.render, this);
-		    _.bindAll(this, 'render');
+		    _.bindAll(this, 'render', "close");
+		},
+		close : function() {
+		    this.model.unbind('change:completed', this.render);
+		    this.$el.empty();
+		    this.undelegateEvents();
 		},
 		render : function () {
 		    var temp = $('#jobResultLine').html();
@@ -92,16 +98,21 @@ $(document).ready(function(){
 	    });
 	var JobView = Backbone.View.extend({
 		el: "#jobsetup",
+		initialize: function() {
+		    _.bindAll(this,"submitJob", "render", "close");
+		},
 		events: {"click .submit-job-btn" : "submitJob"},
+		tv : undefined,
 		submitJob : function () {
 		    if (ags.every(function (m) {return m.validate()})) {
 			var t = new Task({argNames : ags.pluck('name'),
 					  argVals : ags.pluck('value'),
 					  function: { id: this.model.get('id'),
 						      name: this.model.get('name')}});
+			var that = this;
 			t.save(null,{success:function(model, response){
-				    tv = new TaskView({model:model});
-				    tv.render();
+				    that.tv = new TaskView({model:model});
+				    that.tv.render();
 				}});
 		    }
 		},
@@ -110,18 +121,25 @@ $(document).ready(function(){
 		    agsv = new ArgsView();
 		    this.$el.prepend(agsv.render().el)
 		    this.$el.show();
+		},
+		close: function() {
+		    if (this.tv != undefined) this.tv.close();
+		    this.undelegateEvents();
 		}
 	    });
 	var FunctionListView = Backbone.View.extend({
 		el: $('#functions'),
+		initialize: function() {_.bindAll(this,"setupJob","render")},
 		events: {"click .functionName": "setupJob"},
+		jv: undefined,
 		setupJob: function (event) {
-		    if (agsv != undefined) { agsv = undefined;}
+		    if (agsv != undefined) { agsv.close(); agsv = undefined;}
 		    var fid = event.currentTarget.dataset.fid;
 		    var func = this.model.find(function(f) {return f.get("id") == fid});
-		    t = new Job(func)
-		    taskView = new JobView({model:t.toJSON()})
-		    taskView.render()
+		    var t = new Job(func.toJSON());
+		    if (this.jv != undefined) {this.jv.close();}
+		    this.jv = new JobView({model:t});
+		    this.jv.render();
 		},
 		render: function (flist) {
 		    var ftemps = flist.map(function(f){
@@ -130,9 +148,6 @@ $(document).ready(function(){
 			});
 		    this.$el.html(ftemps);
 		    this.$el.show();
-		},
-		remove: function() {
-		    this.$el.hide()
 		},
 	    });
         var Function = Backbone.Model.extend({});
