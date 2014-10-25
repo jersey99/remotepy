@@ -13,6 +13,13 @@
     <script src="{% static "backbone-min.js" %}"></script>
     <script src="{% static "backbone-tastypie.js" %}"></script>
     <script src="{% static "remotepy.js" %}"></script>
+
+    <script type="text/template" id="packagelist">
+      <div><a id="{0}-pid" data-pid="{0}" class="packageName">{1}</a></div>
+    </script>
+
+    <div id="packages">
+    </div>
     <div id="functions">
       <script type="text/template" id="functionlist">
 	<div><a id="{0}-fid" data-fid="{0}" class="functionName">{1}</a></div>

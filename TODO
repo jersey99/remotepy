@@ -8,3 +8,4 @@ General:
 4. Celerify python code
 5. Autostart a celery worker
 6. Javascript validate fields
+7. Fix the URLs to API?

@@ -16,6 +16,13 @@ class FunctionResource(resources.MongoEngineResource):
         resource_name = 'func'
         #authorization = authorization.Authorization()
 
+class PackageResource (resources.MongoEngineResource):
+    functions = fields.ReferencedListField(of='netlambda.resources.FunctionResource',attribute='functions', full=True,null=True)
+    class Meta:
+        object_class = models.Package
+        allowed_methods = ('get')
+        resource_name = 'pack'
+
 class TaskResource(resources.MongoEngineResource):
     function = fields.ReferenceField(to="netlambda.resources.FunctionResource", attribute="function", full=True)
     class Meta:

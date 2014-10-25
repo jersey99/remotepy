@@ -149,6 +149,9 @@ $(document).ready(function(){
 		    this.$el.html(ftemps);
 		    this.$el.show();
 		},
+		close : function () {
+		    this.undelegateEvents();
+		}
 	    });
         var Function = Backbone.Model.extend({});
 	var FunctionList = Backbone.Collection.extend({
@@ -157,5 +160,35 @@ $(document).ready(function(){
 	    });
 	var fl = new FunctionList;
 	var flv = new FunctionListView({model:fl});
-	fl.fetch({success:function(data){return flv.render(data)}});
+
+	var Package = Backbone.Model.extend({});
+	var PackageList = Backbone.Collection.extend({
+		model: Package,
+		url: "/package/pack",
+	    });
+	var PackageListView = Backbone.View.extend({
+		el: $('#packages'),
+		initialize: function() {_.bindAll(this,"viewFunctionList","render")},
+		events: {"click .packageName": "viewFunctionList"},
+		flv: undefined,
+		viewFunctionList: function (event) {
+		    if (flv != undefined) {flv.close();}
+		    var pid = event.currentTarget.dataset.pid;
+		    var pack = this.model.find(function(p) {return p.get("id") == pid});
+		    flv = new FunctionListView({model:pack.get("functions")});
+		    this.flv.render();
+		},
+		render: function (flist) {
+		    var ftemps = flist.map(function(f){
+			    var temp = $("#packagelist").html();
+			    return temp.format(f.get("id"), f.get("name"));
+			});
+		    this.$el.html(ftemps);
+		    this.$el.show();
+		},
+	    });
+	var pl = new PackageList();
+	var plv = new PackageListView();
+	pl.fetch({success:function(data){return plv.render(data)}});
+	//	fl.fetch({success:function(data){return flv.render(data)}});
     });
