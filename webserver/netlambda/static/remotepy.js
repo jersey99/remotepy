@@ -129,7 +129,7 @@ $(document).ready(function(){
 	    });
 	var FunctionListView = Backbone.View.extend({
 		el: $('#functions'),
-		initialize: function() {_.bindAll(this,"setupJob","render")},
+		initialize: function() {_.bindAll(this,"setupJob","render","close")},
 		events: {"click .functionName": "setupJob"},
 		jv: undefined,
 		setupJob: function (event) {
@@ -141,8 +141,8 @@ $(document).ready(function(){
 		    this.jv = new JobView({model:t});
 		    this.jv.render();
 		},
-		render: function (flist) {
-		    var ftemps = flist.map(function(f){
+		render: function () {
+		    var ftemps = this.model.map(function(f){
 			    var temp = $("#functionlist").html();
 			    return temp.format(f.get("id"), f.get("name"));
 			});
@@ -158,8 +158,6 @@ $(document).ready(function(){
 		model: Function,
 		url:"/function/func",
 	    });
-	var fl = new FunctionList;
-	var flv = new FunctionListView({model:fl});
 
 	var Package = Backbone.Model.extend({});
 	var PackageList = Backbone.Collection.extend({
@@ -172,10 +170,11 @@ $(document).ready(function(){
 		events: {"click .packageName": "viewFunctionList"},
 		flv: undefined,
 		viewFunctionList: function (event) {
-		    if (this.flv != undefined) {flv.close();}
+		    if (this.flv != undefined) {this.flv.close();}
 		    var pid = event.currentTarget.dataset.pid;
 		    var pack = this.model.find(function(p) {return p.get("id") == pid});
-		    this.flv = new FunctionListView({model:pack.get("functions")});
+		    this.fl = new FunctionList(pack.get("functions"));
+		    this.flv = new FunctionListView({model:this.fl});
 		    this.flv.render();
 		},
 		render: function (flist) {
