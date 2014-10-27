@@ -172,10 +172,10 @@ $(document).ready(function(){
 		events: {"click .packageName": "viewFunctionList"},
 		flv: undefined,
 		viewFunctionList: function (event) {
-		    if (flv != undefined) {flv.close();}
+		    if (this.flv != undefined) {flv.close();}
 		    var pid = event.currentTarget.dataset.pid;
 		    var pack = this.model.find(function(p) {return p.get("id") == pid});
-		    flv = new FunctionListView({model:pack.get("functions")});
+		    this.flv = new FunctionListView({model:pack.get("functions")});
 		    this.flv.render();
 		},
 		render: function (flist) {
@@ -188,7 +188,7 @@ $(document).ready(function(){
 		},
 	    });
 	var pl = new PackageList();
-	var plv = new PackageListView();
+	var plv = new PackageListView({model:pl});
 	pl.fetch({success:function(data){return plv.render(data)}});
 	//	fl.fetch({success:function(data){return flv.render(data)}});
     });
