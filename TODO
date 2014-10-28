@@ -2,7 +2,7 @@ Security:
 1. Timeout on the client can't be trusted?
 
 General:
-1. List Args
+1. Ellipsis Args
 2. Previous results computed View (using d3?)
 3. Don't compute previously computed results
 4. Celerify python code
