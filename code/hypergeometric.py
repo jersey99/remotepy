@@ -1,8 +1,4 @@
-from celery import Celery
-app = Celery('hypergeometric', backend='mongodb://localhost/turkeycalltest',
-             broker='mongodb://localhost/turkeycalltest')
-@app.task
-def addNumList(l): return reduce(lambda x,y: x+y,l,0)
+def addNumList(l): return sum(l)
 
 N=75 # Total Questions
 n=45 # Questions per turn
@@ -36,11 +32,8 @@ def expectedTurns(Q):
     X[Q] = Ev
     return Ev
 
-@app.task
 def totalTurns(n=45,totalN=75):
     global N
-    global X
-    X = {}
     N = totalN
     retVal = 1+expectedTurns(n) # the Extra 1 for the first turn
     print retVal
