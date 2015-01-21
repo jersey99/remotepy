@@ -14,10 +14,12 @@ class Command(BaseCommand):
         f = Function(**kwargs)
         f.save()
         return f
-    def celerify (self,fname, functions):
-        outfile = open(fname+'-celerified.py','w')
+    def celerify (self,fname, package_name, functions):
+        outFname = fname.replace("/code/", "/celerified-code/")
+        outfile = open(outFname+'.py','w')
         outfile.write("from celery import Celery\n")
-        outfile.write("app = Celery('hypergeometric', backend='mongodb://localhost/turkeycalltest', broker='mongodb://localhost/turkeycalltest')\n")
+        outfile.write("app = Celery('" + package_name +
+                      "', backend='mongodb://localhost/turkeycalltest', broker='mongodb://localhost/turkeycalltest')\n")
         for l in open(fname+'.py','r').readlines():
             ll = l.strip()
             if ll.startswith('def'):
@@ -42,7 +44,7 @@ class Command(BaseCommand):
                 f.update({'path':kwargs["path"],'package_name':package_name})
                 refs.append(self.createFunction(**f))
                 fnames.append(f["name"])
-            self.celerify(package_name_file, fnames)
+            self.celerify(package_name_file, package_name, fnames)
             p = Package()
             p.name = package_name
             p.path = kwargs["path"]

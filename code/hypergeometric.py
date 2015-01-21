@@ -4,9 +4,8 @@ N=75 # Total Questions
 n=45 # Questions per turn
 def prod(l): return reduce(lambda x,y: x*y,l,1)
 
-def fact(n):
-    if n<=1: return 1
-    else: return n*fact(n-1)
+def prod(l): return reduce(lambda x,y:x*y, l, 1)
+def fact(n): return prod(range(1,n+1))
 
 def choose(n,k):
     return fact(n)/(fact(k)*fact(n-k))
