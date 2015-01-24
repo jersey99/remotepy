@@ -1,0 +1,10 @@
+{ "path": "../code/test_vamsi.py",
+  "functions" : [{"name": "test",
+  	      	  "args": [ { "name": "fsky", "type": "float", "default": 0.1, "min" : 0.01, "max":1 },
+  	    	  	    { "name": "freqs", "type": "list-float", "default": [1.0, 10.0, 100.0], "min" : 1.0, "max":100.0},
+			    { "name": "uKCMBarcmin", "type": "list-float", "default": [1.0, 10.0, 100.0], "min" : 1.0, "max":100.0},
+			    { "name": "ell_max", "type": "int", "default": 3000, "min" : 300, "max":30000}
+  	    		    ]
+		 }
+		]
+}

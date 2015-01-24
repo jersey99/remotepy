@@ -116,7 +116,9 @@ class TaskResource(resources.MongoEngineResource):
             fname = F.path.split('/')
             fname = fname[-1]
             fname = fname.split('.py')[0]
-            result = celery_conn.send_task(fname+'.'+F.name, valid_values)
+            print "R.Key ", fname+'.'+F.name
+            result = celery_conn.send_task(fname+'.'+F.name, valid_values,
+                                           queue=fname)
             bundle.data['celery_uuid'] = result.id
             bundle.obj = models.Task(**bundle.data)
             bundle.obj.save()

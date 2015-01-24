@@ -125,6 +125,7 @@ $(document).ready(function(){
 		close: function() {
 		    if (this.tv != undefined) this.tv.close();
 		    this.undelegateEvents();
+		    this.$el.hide();
 		}
 	    });
 	var FunctionListView = Backbone.View.extend({
@@ -150,7 +151,9 @@ $(document).ready(function(){
 		    this.$el.show();
 		},
 		close : function () {
+		    if (this.jv != undefined) this.jv.close();
 		    this.undelegateEvents();
+		    this.$el.hide();
 		}
 	    });
         var Function = Backbone.Model.extend({});
