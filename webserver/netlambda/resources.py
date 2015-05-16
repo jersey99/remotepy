@@ -34,7 +34,7 @@ class TaskResource(resources.MongoEngineResource):
 
     def obj_get(self, bundle, **kwargs):
         t = models.Task.objects(id=kwargs['pk']).first()
-        print "t", t, kwargs['pk'], t.argVals, t.completed
+        print("t", t, kwargs['pk'], t.argVals, t.completed)
         if t.completed: return t
         from celery.result import AsyncResult
         res = AsyncResult(t.celery_uuid)
@@ -69,13 +69,13 @@ class TaskResource(resources.MongoEngineResource):
                         argVals[i] = map(int,list(argVals[i]))
                     elif arg.type == 'list-float':
                         argVals[i] = map(float,list(argVals[i]))
-                    if (((type(argVals[i]) == list) and
+                    if ((type(argVals[i]) == list and
                          any(map(lambda x: (x > arg.max) or (x < arg.min), argVals[i]))) or
                         (type(argVals[i]) != list and (argVals[i] > arg.max or argVals[i] < arg.min))):
                         errors.update({arg.name:"Out of Bounds"})
                         return errors
-            print "Model Validated!"
-        print errors
+            print("Model Validated!")
+        print(errors)
         return errors
 
     def obj_create(self, bundle, **kwargs):

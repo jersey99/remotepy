@@ -44,7 +44,7 @@ class Command(BaseCommand):
                 f.update({'path':kwargs["path"],'package_name':package_name})
                 refs.append(self.createFunction(**f))
                 fnames.append(f["name"])
-            self.celerify(package_name_file, package_name, fnames)
+            #self.celerify(package_name_file, package_name, fnames)
             p = Package()
             p.name = package_name
             p.path = kwargs["path"]
