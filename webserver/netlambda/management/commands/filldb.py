@@ -6,11 +6,11 @@ import json
 class Command(BaseCommand):
     help = 'Fill functions into DB'
     def createFunction (self, **kwargs):
-        print kwargs
+#        print('***', kwargs)
         if "args" in kwargs:
-            print kwargs["args"]
+#            print ('blah', kwargs["args"])
             kwargs["args"] = [Arg(**arg) for arg in kwargs["args"]]
-        print kwargs
+#        print('---', kwargs)
         f = Function(**kwargs)
         f.save()
         return f
@@ -28,11 +28,11 @@ class Command(BaseCommand):
                 if any(map(lambda x: ll[1] == x or ll[1].startswith(x+'('),functions)):
 #                if ll[1] == fname or ll[1].startswith(fname+'('):
                     outfile.write('@app.task\n')
-            outfile.write(l)
+            outfile.wsrite(l)
         outfile.close()
     def createPackage (self, **kwargs):
         if "functions" in kwargs:
-            print kwargs["functions"]
+            print(kwargs["functions"])
             refs = []
             package_name = kwargs['path']
             package_name_file = package_name.split('.py')[0]
@@ -54,7 +54,7 @@ class Command(BaseCommand):
         jsonFilesPath = "../function-json/"
         functionFiles = [jsonFilesPath+f for f in listdir(jsonFilesPath) if f.endswith('.json')]
         for jsonFile in functionFiles:
-            print jsonFile
+            print(jsonFile)
             jdata = open(jsonFile)
             packageData = json.load(jdata)
             self.createPackage(**packageData)

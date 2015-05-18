@@ -52,13 +52,13 @@ class TaskResource(resources.MongoEngineResource):
             func_key = bundle.data['function']['id']
             F = models.Function.objects(id=func_key).first()
             if not F: return errors.update({"function": "Doesn't exist"})
-            if ((not 'argNames' in bundle.data) or (not 'argVals' in bundle.data) or 
-                (len(bundle.data['argNames']) != len(bundle.data['argVals']))):
+            if ('argNames' not in bundle.data or 'argVals' not in bundle.data or 
+                len(bundle.data['argNames']) != len(bundle.data['argVals'])):
                 return errors.update({"function": "Number of argument Names and Values provided don't match"})
             argVals = map(lambda x: json.loads(x), bundle.data['argVals'])
             argNames = bundle.data['argNames']
             for arg in F.args:
-                print "Ahem", arg.name, argNames, arg.name in argNames
+                print("Ahem", arg.name, argNames, arg.name in argNames)
                 if arg.name in argNames:
                     i = argNames.index(arg.name)
                     if arg.type == 'int':
@@ -102,25 +102,23 @@ class TaskResource(resources.MongoEngineResource):
                     valid_values.append(map(int,list(argVals[i])))
                 elif arg.type == 'list-float':
                     valid_values.append(map(float,list(argVals[i])))
-            else:
-                valid_values.append(arg.default)
+            else: valid_values.append(arg.default)
         bundle.data['argNames'] = valid_names
         bundle.data['argVals'] = valid_values
         bundle.data['function'] = F
         bundle.data['name'] = F.name
         bundle.data['completed'] = False
-        print "bundle.data", bundle.data
+        print("bundle.data", bundle.data)
         # TODO: If task was already run, retrieve the result of the task instead
         from webserver.settings import celery_conn
         if F.path:
             fname = F.path.split('/')
             fname = fname[-1]
             fname = fname.split('.py')[0]
-            print "R.Key ", fname+'.'+F.name
-            result = celery_conn.send_task(fname+'.'+F.name, valid_values,
-                                           queue=fname)
+            print("R.Key ", fname+'.'+F.name)
+            result = celery_conn.send_task(fname+'.'+F.name, valid_values, queue=fname)
             bundle.data['celery_uuid'] = result.id
             bundle.obj = models.Task(**bundle.data)
             bundle.obj.save()
-            print "returning bundle"
+            print("returning bundle")
             return bundle

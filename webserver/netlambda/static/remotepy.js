@@ -27,19 +27,30 @@ $(document).ready(function(){
 		    "change .argInput" : "updateValue"
 		},
 		updateValue : function (event) {
-		    this.model.set("value", event.currentTarget.value);
+		    var v = _.map(this.model.get("desc_list"), function (x) x=== event.currentTarget.value? 1: 0);
+		    this.model.set("value", v);
 		},
 		render : function() {
-		    var temp = $("#argInputLine").html();
-		    temp = temp.format(this.model.get("name"), this.model.get("name"), this.model.get("type"),
-				       this.model.get("min"), this.model.get("max"), this.model.get('default'));
-		    this.$el.html(temp);
+		    var m = this.model;
+		    if (m.get("meta_type") != null) {
+			var y = "arg-name : <b>" + m.get("name") + "</b> : ";
+			yy = _.map(_.zip(m.get("desc_list"), eval(m.get("default"))),
+				   function (x) {
+				       var checked = function (x) (x===1) ? "checked=\"checked\"" : "";
+				       return $("#argInputMeta").html().format(m.get("name"),x[0],checked(x[1]),m.get("meta_type"));
+				   });
+			this.$el.html(y + yy.join(' '));
+		    } else {
+			this.$el.html($("#argInputLine").html().format(m.get("name"),
+								       m.get("type"), m.get("min"),
+								       m.get("max"), m.get('default')));
+		    }
 		    return this;
 		}
 	    });
-	var Args = Backbone.Collection.extend({model: Arg});
+	var Args = Backbone.Collection.extend({ model: Arg });
 	var ags = undefined;
-	var ArgsView = Backbone.View.extend({ 
+	var ArgsView = Backbone.View.extend({
 		el : $("#arglistsetup"),
 		addOne : function(model) {
 		    var view = new ArgView ({ model : model });
@@ -101,7 +112,7 @@ $(document).ready(function(){
 		initialize: function() {
 		    _.bindAll(this,"submitJob", "render", "close");
 		},
-		events: {"click .submit-job-btn" : "submitJob"},
+		events: {"click .minimal" : "submitJob"},
 		tv : undefined,
 		submitJob : function () {
 		    if (ags.every(function (m) {return m.validate()})) {
@@ -117,7 +128,7 @@ $(document).ready(function(){
 		    }
 		},
 		render : function () {
-		    this.$el.html("<button class=\"submit-job-btn\">Submit Job!</button>");
+		    this.$el.html($("#minimal-button").html());
 		    agsv = new ArgsView();
 		    this.$el.prepend(agsv.render().el)
 		    this.$el.show();

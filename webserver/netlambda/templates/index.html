@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Make a PyCall</title>
+    <link rel="stylesheet" type="text/css" href="/static/site.css" media="screen" />
 </head>
 <body>
 <!--    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -15,30 +16,35 @@
     <script src="{% static "remotepy.js" %}"></script>
 
     <script type="text/template" id="packagelist">
-      <div><a id="{0}-pid" data-pid="{0}" class="packageName">{1}</a></div>
+      <div><a id="{0}-pid" data-pid="{0}" class="packageName"><h3>{1}</h3></a></div>
     </script>
-    <div class="packageName"> PACKAGES:
+    <div class="packageName"> <h1> PACKAGES: </h1>
       <div id="packages"></div>
     </div>
-    <div class="funcNames"> FUNCTIONS AVAILABLE:
+    <div class="funcNames"> <h1> FUNCTIONS AVAILABLE: </h1>
       <div id="functions"></div>
     </div>
     <script type="text/template" id="functionlist">
-      <div><a id="{0}-fid" data-fid="{0}" class="functionName">{1}</a></div>
+      <div><a id="{0}-fid" data-fid="{0}" class="functionName"><h3>{1}</h3></a></div>
     </script>
     <script type="text/template" id="argInputLine">
       <div>
-	arg-name: {1} ; arg-type : {2} ; arg-range: [{3}, {4}] Value:<input name="{0}" placeholder="{5}" class="argInput" data-tn="{0}">
+	arg-name: <b>{0}</b> ; arg-type : {1} ; arg-range: [{2}, {3}] <b>Value</b> : <input name="{0}" placeholder="{4}" class="argInput" data-tn="{0}">
       </div>
+      <!-- <a id="{0}-fid" data-fid="{0}" class="functionName">{1}</a>-->
+    </script>
+    <script type="text/template" id="argInputMeta">
+     <input type="{3}" name="{0}" value="{1}" class="argInput" {2}/><label for="{1}">{1}</label>
       <!-- <a id="{0}-fid" data-fid="{0}" class="functionName">{1}</a>-->
     </script>
     <div id="jobsetup">
       <div id="arglistsetup">
       </div>
     </div>
-    <div id="jobresult">
-      
-    </div>
+    <script type="text/template" id="minimal-button">
+      <div><button class="minimal">Submit Job!</button></div>
+    </script>
+    <div id="jobresult"></div>
     <script type="text/template" id="jobResultLine">
       <span>
 	{0}({1}) = {2}

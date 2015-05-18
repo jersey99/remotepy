@@ -7,6 +7,8 @@ class Arg(EmbeddedDocument):
     min = DynamicField()
     max = DynamicField()
     type = StringField(required=True)
+    meta_type = StringField()
+    desc_list = ListField(StringField(required=True))
 
 class Function(Document):
     created_on = DateTimeField()
