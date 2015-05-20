@@ -19,7 +19,7 @@ $(document).ready(function(){
 		}
 	    });
 	var ArgView = Backbone.View.extend({
-		tagName : 'div',
+		tagName : 'tr',
 		initialize : function(model, options){
 		    this.options = options
 		},
@@ -33,17 +33,17 @@ $(document).ready(function(){
 		render : function() {
 		    var m = this.model;
 		    if (m.get("meta_type") != null) {
-			var y = "arg-name : <b>" + m.get("name") + "</b> : ";
+			var y = "<td><b>" + m.get("name") + "</b></td><td></td><td></td><td>";
 			yy = _.map(_.zip(m.get("desc_list"), eval(m.get("default"))),
 				   function (x) {
 				       var checked = function (x) (x===1) ? "checked=\"checked\"" : "";
 				       return $("#argInputMeta").html().format(m.get("name"),x[0],checked(x[1]),m.get("meta_type"));
 				   });
-			this.$el.html(y + yy.join(' '));
+			this.$el.append(y + yy.join(' ') + "</td><td> [" +m.get("comment") + "]</td>");
 		    } else {
-			this.$el.html($("#argInputLine").html().format(m.get("name"),
-								       m.get("type"), m.get("min"),
-								       m.get("max"), m.get('default')));
+			this.$el.append($("#argInputLine").html().format(m.get("name"), m.get("type"),
+								       m.get("min"), m.get("max"),
+								       m.get('default'), m.get("comment")));
 		    }
 		    return this;
 		}
@@ -62,6 +62,7 @@ $(document).ready(function(){
 		},
 		render : function() {
 		    this.$el.html("");
+		    this.$el.html("<tr><td>Arg-Name</td> <td>Type</td> <td>Element Range</td> <td>Input w/ Default</td> <td>Description</td></tr>")
 		    this.addAll();
 		    return this
 		},

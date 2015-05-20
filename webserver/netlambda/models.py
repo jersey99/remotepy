@@ -8,6 +8,7 @@ class Arg(EmbeddedDocument):
     max = DynamicField()
     type = StringField(required=True)
     meta_type = StringField()
+    comment = StringField()
     desc_list = ListField(StringField(required=True))
 
 class Function(Document):

@@ -28,9 +28,7 @@
       <div><a id="{0}-fid" data-fid="{0}" class="functionName"><h3>{1}</h3></a></div>
     </script>
     <script type="text/template" id="argInputLine">
-      <div>
-	arg-name: <b>{0}</b> ; arg-type : {1} ; arg-range: [{2}, {3}] <b>Value</b> : <input name="{0}" placeholder="{4}" class="argInput" data-tn="{0}">
-      </div>
+	<td><b>{0}</b></td><td>{1}</td><td>[{2}, {3}]</td><td><input name="{0}" placeholder="{4}" class="argInput" data-tn="{0}"></td><td>[{5}]</td>
       <!-- <a id="{0}-fid" data-fid="{0}" class="functionName">{1}</a>-->
     </script>
     <script type="text/template" id="argInputMeta">
@@ -38,8 +36,8 @@
       <!-- <a id="{0}-fid" data-fid="{0}" class="functionName">{1}</a>-->
     </script>
     <div id="jobsetup">
-      <div id="arglistsetup">
-      </div>
+      <table id="arglistsetup" border="1">
+      </table>
     </div>
     <script type="text/template" id="minimal-button">
       <div><button class="minimal">Submit Job!</button></div>
