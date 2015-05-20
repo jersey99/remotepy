@@ -5,18 +5,18 @@
     <link rel="stylesheet" type="text/css" href="/static/site.css" media="screen" />
 </head>
 <body>
-<!--    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>-->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
     {% load staticfiles %}
     <script src="{% static "jquery.min.js" %}"></script>
-    <script src="{% static "underscore-min.js" %}"></script>
-    <script src="{% static "backbone-min.js" %}"></script>
+    <!--<script src="{% static "underscore-min.js" %}"></script>
+    <script src="{% static "backbone-min.js" %}"></script>-->
     <script src="{% static "backbone-tastypie.js" %}"></script>
     <script src="{% static "remotepy.js" %}"></script>
 
     <script type="text/template" id="packagelist">
-      <div><a id="{0}-pid" data-pid="{0}" class="packageName"><h3>{1}</h3></a></div>
+      <div><a id="{0}-pid" data-pid="{0}" class="packageName"><h3 style="text-decoration: underline;">{1}</h3></a></div>
     </script>
     <div class="packageName"> <h1> PACKAGES: </h1>
       <div id="packages"></div>
@@ -25,14 +25,14 @@
       <div id="functions"></div>
     </div>
     <script type="text/template" id="functionlist">
-      <div><a id="{0}-fid" data-fid="{0}" class="functionName"><h3>{1}</h3></a></div>
+      <div><a id="{0}-fid" data-fid="{0}" class="functionName"><h3 style="text-decoration: underline;">{1}</h3></a></div>
     </script>
     <script type="text/template" id="argInputLine">
-	<td><b>{0}</b></td><td>{1}</td><td>[{2}, {3}]</td><td><input name="{0}" placeholder="{4}" class="argInput" data-tn="{0}"></td><td>[{5}]</td>
+	<td style="white-space:nowrap"><b>{0}</b></td><td style="white-space:nowrap">{1}</td><td  style="white-space:nowrap">[{2}, {3}]</td><td><input name="{0}" placeholder="{4}" class="argInput" data-tn="{0}"></td><td>[{5}]</td>
       <!-- <a id="{0}-fid" data-fid="{0}" class="functionName">{1}</a>-->
     </script>
     <script type="text/template" id="argInputMeta">
-     <input type="{3}" name="{0}" value="{1}" class="argInput" {2}/><label for="{1}">{1}</label>
+      <a style="white-space:nowrap"><input type="{3}" name="{0}" value="{1}" class="argInput" {2}/><label for="{1}">{1}</label></a>
       <!-- <a id="{0}-fid" data-fid="{0}" class="functionName">{1}</a>-->
     </script>
     <div id="jobsetup">
@@ -45,7 +45,7 @@
     <div id="jobresult"></div>
     <script type="text/template" id="jobResultLine">
       <span>
-	{0}({1}) = {2}
+	{0}({1}) =<br><pre id="json">{2}</pre>
       </span>
     </script>
 </body>

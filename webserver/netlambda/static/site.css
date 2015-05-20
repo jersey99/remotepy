@@ -6,13 +6,16 @@ h1 {
     font-weight: 500;
     line-height: 23px;
 };
-h3 {
-    font-family: 'Book Antiqua', Palatino, 'Palatino Linotype', 'Palatino LT STD', Georgia, serif;
-    font-size: 17px;
-    font-style: normal;
-    font-variant: normal;
-    font-weight: 500;
-    line-height: 23px;
+/* h3 { */
+/*     font-family: 'Book Antiqua', Palatino, 'Palatino Linotype', 'Palatino LT STD', Georgia, serif; */
+/*     font-size: 17px; */
+/*     font-style: normal; */
+/*     text-decoration: underline; */
+/*     font-variant: normal; */
+/*     font-weight: 500; */
+/*     line-height: 23px; */
+/* }; */
+h3 { text-decoration: "underline";
 };
 p {
     font-family: 'Book Antiqua', Palatino, 'Palatino Linotype', 'Palatino LT STD', Georgia, serif;

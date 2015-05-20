@@ -27,7 +27,7 @@ $(document).ready(function(){
 		    "change .argInput" : "updateValue"
 		},
 		updateValue : function (event) {
-		    var v = _.map(this.model.get("desc_list"), function (x) x=== event.currentTarget.value? 1: 0);
+		    var v = _.map(this.model.get("desc_list"), function (x) { return x === event.currentTarget.value ? 1: 0; });
 		    this.model.set("value", v);
 		},
 		render : function() {
@@ -36,7 +36,7 @@ $(document).ready(function(){
 			var y = "<td><b>" + m.get("name") + "</b></td><td></td><td></td><td>";
 			yy = _.map(_.zip(m.get("desc_list"), eval(m.get("default"))),
 				   function (x) {
-				       var checked = function (x) (x===1) ? "checked=\"checked\"" : "";
+				       var checked = function (x) {return (x===1) ? "checked=\"checked\"" : "";};
 				       return $("#argInputMeta").html().format(m.get("name"),x[0],checked(x[1]),m.get("meta_type"));
 				   });
 			this.$el.append(y + yy.join(' ') + "</td><td> [" +m.get("comment") + "]</td>");
