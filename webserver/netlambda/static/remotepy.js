@@ -11,11 +11,16 @@ $(document).ready(function(){
 		    _.bindAll(this,"validate");
 		},
 		validate: function(attrs) {
-		    if ((this.has('min') && (this.get('min') > this.value))||
-			(this.has('max') && (this.get('max') < this.value))) {
-			alert(this.get('name') + " Out of range")
-			return false
-		    } else return true
+		    var v = JSON.parse(this.get('value'));
+		    var mi = this.has('min') ? JSON.parse(this.get('min')) : v;
+		    var ma = this.has('max') ? JSON.parse(this.get('max')) : v;
+		    var retVal = false;
+		    if (this.get('type') === 'int' || this.get('type') === 'float')
+			retVal =  mi <= v && ma >= v;
+		    else if (this.get('type') === 'list-int' || this.get('type') === 'list-float') {
+			retVal =  _.every(v,function (xv) {return mi <= xv && ma >= xv;});
+		    } else alert('Something is screwed up');
+		    return retVal;
 		}
 	    });
 	var ArgView = Backbone.View.extend({
@@ -27,7 +32,17 @@ $(document).ready(function(){
 		    "change .argInput" : "updateValue"
 		},
 		updateValue : function (event) {
-		    var v = _.map(this.model.get("desc_list"), function (x) { return x === event.currentTarget.value ? 1: 0; });
+		    var v = null;
+		    if (this.model.get("meta_type") == "checkbox") {
+			v = _.map(_.zip(this.model.get("desc_list"),eval(this.model.get("value"))),
+				  function (x) { return (x[0] === event.currentTarget.value) ? (x[1]+1)%2:x[1];}).join(',');
+			v = '['+v+']';
+		    }
+		    else if (this.model.get("meta_type") == "radio") {
+			v = _.map(this.model.get("desc_list"),
+				  function (x) { return (x === event.currentTarget.value) ? 1:0;}).join(',');
+			v = '['+v+']'
+		    } else v = event.currentTarget.value;
 		    this.model.set("value", v);
 		},
 		render : function() {
@@ -102,8 +117,8 @@ $(document).ready(function(){
 			temp = temp.format(this.model.get('name'),args," Computing ...");
 			var that = this;
 			if (this.timeoutID != undefined) clearInterval(this.timeoutID);
-			this.timeoutID = setInterval(function(){that.model.fetch();},this.timeoutVal);
-			this.timeoutVal = this.timeoutVal * 2;
+			this.timeoutID = setInterval(function(){that.model.fetch();that.render();},this.timeoutVal);
+			this.timeoutVal = ~~(this.timeoutVal * 1.25);
 		    }
 		    this.$el.html(temp);
 		}
@@ -126,7 +141,7 @@ $(document).ready(function(){
 				    that.tv = new TaskView({model:model});
 				    that.tv.render();
 				}});
-		    }
+		    } else alert ("parameters invalid!");
 		},
 		render : function () {
 		    this.$el.html($("#minimal-button").html());
