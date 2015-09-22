@@ -1,5 +1,5 @@
 from mongoengine import *
-#from celerify import Celerify
+
 
 class Arg(EmbeddedDocument):
     name = StringField(required=True)
@@ -11,6 +11,7 @@ class Arg(EmbeddedDocument):
     comment = StringField()
     desc_list = ListField(StringField(required=True))
 
+
 class Function(Document):
     created_on = DateTimeField()
     path = StringField(required=True)
@@ -19,10 +20,12 @@ class Function(Document):
     description = StringField()
     package_name = StringField()
 
+
 class Package(Document):
     name = StringField(required=True)
     path = StringField(required=True)
     functions = ListField(ReferenceField(Function, required=True))
+
 
 class Task(Document):
     created_on = DateTimeField()
